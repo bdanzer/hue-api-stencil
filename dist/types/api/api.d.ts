@@ -1,0 +1,30 @@
+declare class HueApi {
+    username: string;
+    apiUrl: string;
+    groups: string;
+    local: boolean;
+    appId: string;
+    clientId: string;
+    clientSecret: string;
+    deviceId: any;
+    postAuthHue: any;
+    constructor();
+    changeApiContext(url: any): void;
+    getContext(cookies: any): Promise<any>;
+    getBase64(): string;
+    startRemote(): Promise<void>;
+    makeNewDev(): Promise<any>;
+    getHueUrl(addOns?: string): string;
+    setGroups(): void;
+    digestAuth(): Promise<void>;
+    haveLocal(): Promise<any>;
+    setLightState(lightId: any, obj: any): Promise<void>;
+    lightStateUrl(lightId: any): string;
+    getLightsUrl(): string;
+    getLight(id: any): Promise<any>;
+    getGroupUrl(): string;
+    basicAuth(): Promise<void>;
+    getLights(url: any): Promise<any>;
+}
+declare const _default: HueApi;
+export default _default;

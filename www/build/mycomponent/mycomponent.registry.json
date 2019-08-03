@@ -1,0 +1,39 @@
+{
+  "namespace": "mycomponent",
+  "fsNamespace": "mycomponent",
+  "loader": "../mycomponent.js",
+  "corePolyfilled": "es5-build-disabled.js",
+  "core": "mycomponent.core.js",
+  "components": {
+    "dp-alert": {
+      "bundleIds": {
+        "$": "dp-alert"
+      }
+    },
+    "dp-range": {
+      "bundleIds": {
+        "$": "dp-alert"
+      }
+    },
+    "dp-switch": {
+      "bundleIds": {
+        "$": "dp-switch"
+      }
+    },
+    "hue-app": {
+      "bundleIds": {
+        "$": "dp-alert"
+      }
+    },
+    "hue-card": {
+      "bundleIds": {
+        "$": "dp-alert"
+      }
+    },
+    "hue-collection": {
+      "bundleIds": {
+        "$": "dp-alert"
+      }
+    }
+  }
+}
