@@ -130,15 +130,17 @@ class HueApi {
     }
 
     lightStateUrl(lightId) {
-        return this.getLightsUrl() + `/${lightId}/state`
+        return this.getLightsUrl() + `/${lightId}/state`;
     }
 
     getLightsUrl() {
-        return `${this.apiUrl}/${this.username}/lights`
+        return `${this.apiUrl}/${this.username}/lights`;
     }
 
-    getLight(id) {
-        return this.getLights(`${this.getLightsUrl()}/${id}`)
+    async getLight(id) {
+        let lightData = await this.getLights(`${this.getLightsUrl()}/${id}`);
+        lightData['lightId'] = id
+        return lightData;
     }
 
     getGroupUrl() {

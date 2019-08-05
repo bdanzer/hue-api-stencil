@@ -14,12 +14,13 @@ export class HueCollection {
         return cards;
     }
     getGroups() {
+        console.log(this.lights);
         let cards = [];
         for (let room in this.groups) {
             let lights = this.groups[room];
             cards.push((h("div", { class: "danzerpress-col-1" },
                 h("h2", null, room))));
-            lights.forEach(light => {
+            lights.forEach((light) => {
                 cards.push((h("hue-card", Object.assign({ class: 'danzerpress-col-3' }, light.state, { lightName: light.name, lightId: light.lightId }))));
             });
         }

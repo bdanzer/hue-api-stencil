@@ -67,7 +67,7 @@ export class HueApp {
 
   async handleGroupLights() {
     this.loading = true;
-    let groupData = await HueApi.getLights(HueApi.getGroupUrl())
+    let groupData = await HueApi.getLights(HueApi.getGroupUrl());
     
     for (var index in groupData) {
       let group = groupData[index],
@@ -86,10 +86,6 @@ export class HueApp {
       let lights = await Promise.all(promises);
 
       for (var i = 0; i < lights.length; i++) {
-        var lightId = lights[i];
-        //add light id
-        lights[i].lightId = lightId;
-
         if (this.groups[groupName]) {
           this.groups[groupName].push(lights[i]);
         } else {

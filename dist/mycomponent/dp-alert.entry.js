@@ -525,8 +525,10 @@ class HueApi {
     getLightsUrl() {
         return `${this.apiUrl}/${this.username}/lights`;
     }
-    getLight(id) {
-        return this.getLights(`${this.getLightsUrl()}/${id}`);
+    async getLight(id) {
+        let lightData = await this.getLights(`${this.getLightsUrl()}/${id}`);
+        lightData['lightId'] = id;
+        return lightData;
     }
     getGroupUrl() {
         return `${this.apiUrl}/${this.username}/groups`;
@@ -725,9 +727,6 @@ class HueApp {
             }
             let lights = await Promise.all(promises);
             for (var i = 0; i < lights.length; i++) {
-                var lightId = lights[i];
-                //add light id
-                lights[i].lightId = lightId;
                 if (this.groups[groupName]) {
                     this.groups[groupName].push(lights[i]);
                 }
@@ -939,12 +938,13 @@ class HueCollection {
         return cards;
     }
     getGroups() {
+        console.log(this.lights);
         let cards = [];
         for (let room in this.groups) {
             let lights = this.groups[room];
             cards.push((h("div", { class: "danzerpress-col-1" },
                 h("h2", null, room))));
-            lights.forEach(light => {
+            lights.forEach((light) => {
                 cards.push((h("hue-card", Object.assign({ class: 'danzerpress-col-3' }, light.state, { lightName: light.name, lightId: light.lightId }))));
             });
         }

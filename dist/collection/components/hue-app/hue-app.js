@@ -60,9 +60,6 @@ export class HueApp {
             }
             let lights = await Promise.all(promises);
             for (var i = 0; i < lights.length; i++) {
-                var lightId = lights[i];
-                //add light id
-                lights[i].lightId = lightId;
                 if (this.groups[groupName]) {
                     this.groups[groupName].push(lights[i]);
                 }

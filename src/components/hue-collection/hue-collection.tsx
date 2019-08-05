@@ -34,6 +34,7 @@ export class HueCollection {
   }
 
   getGroups() {
+    console.log(this.lights);
     let cards = [];
     
     for (let room in this.groups) {
@@ -44,7 +45,7 @@ export class HueCollection {
         </div>
       ));
 
-      lights.forEach(light => {
+      lights.forEach((light) => {
         cards.push((
           <hue-card 
             class='danzerpress-col-3'
