@@ -77,17 +77,23 @@ export class HueApp {
       /**
        * looping a group of lights
        */
-      for (var i = 0; i < lightGroup.length; i++) {
-        var lightId = lightGroup[i];
-        var light = await HueApi.getLight(lightGroup[i]);
 
+      let promises = [];
+      for (var i = 0; i < lightGroup.length; i++) {
+        promises.push(HueApi.getLight(lightGroup[i]));
+      }
+
+      let lights = await Promise.all(promises);
+
+      for (var i = 0; i < lights.length; i++) {
+        var lightId = lights[i];
         //add light id
-        light.lightId = lightId;
+        lights[i].lightId = lightId;
 
         if (this.groups[groupName]) {
-          this.groups[groupName].push(light);
+          this.groups[groupName].push(lights[i]);
         } else {
-          this.groups[groupName] = [light];
+          this.groups[groupName] = [lights[i]];
         }
       }
     }

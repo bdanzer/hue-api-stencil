@@ -25,7 +25,7 @@ class HueApi {
     async setContext(cookies) {
         let context = await this.haveLocal(),
             deviceId = false,
-            testRemote = false;
+            testRemote = true;
 
         if (!testRemote && context.haveLocal && context.id) {
             deviceId = context.id

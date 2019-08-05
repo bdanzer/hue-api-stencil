@@ -15,7 +15,7 @@ class HueApi {
         this.apiUrl = url;
     }
     async setContext(cookies) {
-        let context = await this.haveLocal(), deviceId = false, testRemote = false;
+        let context = await this.haveLocal(), deviceId = false, testRemote = true;
         if (!testRemote && context.haveLocal && context.id) {
             deviceId = context.id;
             this.changeApiContext(`http://${context.internalipaddress}/api`);

@@ -443,11 +443,7 @@ class HueApi {
     }
     async setContext(cookies) {
         let context = await this.haveLocal(), deviceId = false;
-        if (context.haveLocal && context.id) {
-            deviceId = context.id;
-            this.changeApiContext(`http://${context.internalipaddress}/api`);
-        }
-        else {
+        {
             context['haveLocal'] = false;
         }
         if (cookies.deviceId && cookies.deviceId !== 'undefined') {
@@ -719,16 +715,20 @@ class HueApp {
             /**
              * looping a group of lights
              */
+            let promises = [];
             for (var i = 0; i < lightGroup.length; i++) {
-                var lightId = lightGroup[i];
-                var light = await HueApi$1.getLight(lightGroup[i]);
+                promises.push(HueApi$1.getLight(lightGroup[i]));
+            }
+            let lights = await Promise.all(promises);
+            for (var i = 0; i < lights.length; i++) {
+                var lightId = lights[i];
                 //add light id
-                light.lightId = lightId;
+                lights[i].lightId = lightId;
                 if (this.groups[groupName]) {
-                    this.groups[groupName].push(light);
+                    this.groups[groupName].push(lights[i]);
                 }
                 else {
-                    this.groups[groupName] = [light];
+                    this.groups[groupName] = [lights[i]];
                 }
             }
         }
