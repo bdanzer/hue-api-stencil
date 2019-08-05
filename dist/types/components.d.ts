@@ -15,7 +15,6 @@ export namespace Components {
   interface DpAlert {
     'alerted': boolean;
     'ms': number;
-    'test': () => Promise<void>;
     'text': string;
     'toasty': (text: any, alert: any, ms: any) => Promise<void>;
   }
@@ -66,9 +65,11 @@ export namespace Components {
 
   interface HueApp {
     'lights': object;
+    'proxyServer': string;
   }
   interface HueAppAttributes extends StencilHTMLAttributes {
     'lights'?: object;
+    'proxyServer'?: string;
   }
 
   interface HueCard {

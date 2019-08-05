@@ -1,12 +1,4 @@
 export class DpAlert {
-    componentDidLoad() {
-    }
-    componentWillUpdate() {
-        console.log('alerted', this.alerted);
-    }
-    async test() {
-        console.log('works');
-    }
     async toasty(text, alert, ms) {
         this.alerted = alert;
         this.text = text;
@@ -18,7 +10,6 @@ export class DpAlert {
         }
     }
     render() {
-        console.log('this alerted render', this.alerted, this.text);
         return (h("div", { class: `dp-alert ${this.alerted ? 'on' : 'off'}` },
             !this.ms ? (h("span", { class: "close-x", onClick: () => { this.alerted = false; } }, "x")) : '',
             h("slot", null, this.text)));
@@ -34,9 +25,6 @@ export class DpAlert {
             "type": Number,
             "attr": "ms",
             "mutable": true
-        },
-        "test": {
-            "method": true
         },
         "text": {
             "type": String,

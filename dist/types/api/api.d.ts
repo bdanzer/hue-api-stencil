@@ -8,9 +8,12 @@ declare class HueApi {
     clientSecret: string;
     deviceId: any;
     postAuthHue: any;
+    accessToken: any;
+    isRemote: boolean;
+    proxyServer: string;
     constructor();
     changeApiContext(url: any): void;
-    getContext(cookies: any): Promise<any>;
+    setContext(cookies: any): Promise<any>;
     getBase64(): string;
     startRemote(): Promise<void>;
     makeNewDev(): Promise<any>;
@@ -18,13 +21,15 @@ declare class HueApi {
     setGroups(): void;
     digestAuth(): Promise<void>;
     haveLocal(): Promise<any>;
-    setLightState(lightId: any, obj: any): Promise<void>;
     lightStateUrl(lightId: any): string;
     getLightsUrl(): string;
     getLight(id: any): Promise<any>;
     getGroupUrl(): string;
-    basicAuth(): Promise<void>;
+    basicAuth(): Promise<any>;
+    createWhiteList(accessToken: any): Promise<any>;
+    remoteRegisterDevice(accessToken: any): Promise<any>;
     getLights(url: any): Promise<any>;
+    setLightState(lightId: any, obj: any): Promise<void>;
 }
 declare const _default: HueApi;
 export default _default;

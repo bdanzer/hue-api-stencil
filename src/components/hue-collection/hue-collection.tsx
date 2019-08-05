@@ -37,7 +37,6 @@ export class HueCollection {
     let cards = [];
     
     for (let room in this.groups) {
-      console.log(room);
       let lights = this.groups[room];
       cards.push((
         <div class="danzerpress-col-1">

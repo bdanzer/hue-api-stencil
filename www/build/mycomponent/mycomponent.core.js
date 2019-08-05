@@ -1573,22 +1573,7 @@ async function update(plt, elm, perf, isInitialLoad, instance, ancestorHostEleme
       } catch (e) {
         plt.onError(e, 3 /* WillLoadError */ , elm);
       }
-    } else if (true, instance) 
-    // component already initialized, this is an update
-    // already created an instance and this is an update
-    // fire off the user's componentWillUpdate method (if one was provided)
-    // componentWillUpdate runs BEFORE render() has been called
-    // but only BEFORE an UPDATE and not before the intial render
-    // get the returned promise (if one was provided)
-    try {
-      if (instance.componentWillUpdate) {
-        false;
-        await instance.componentWillUpdate();
-        false;
-      }
-    } catch (e) {
-      plt.onError(e, 5 /* WillUpdateError */ , elm);
-    }
+    } else false;
     // if this component has a render function, let's fire
     // it off and generate a vnode for this
         render(plt, plt.getComponentMeta(elm), elm, instance, perf);
@@ -2222,4 +2207,4 @@ function createPlatformMain(namespace, Context, win, doc, resourcesUrl, hydrated
 
 // esm build which uses es module imports and dynamic imports
 createPlatformMain(namespace, Context, window, document, resourcesUrl, hydratedCssClass, components);
-})(window,document,{},"mycomponent","hydrated",[["dp-alert","dp-alert",1,[["alerted",2,0,1,4],["ms",2,0,1,8],["test",32],["text",2,0,1,2],["toasty",32]]],["dp-range","dp-alert",1,[["ariaLabel",1,0,"aria-label",2],["ariaValueNow",1,0,"aria-value-now",8],["data",1,0,1,1],["disabled",1,0,1,4],["max",1,0,1,2],["min",1,0,1,2],["rangeValue",2,0,"range-value",2]]],["dp-switch","dp-switch",1,[["ariaLabel",1,0,"aria-label",2],["callback",1],["data",1,0,1,1],["disabled",1,0,1,4],["isChecked",1,0,"is-checked",4],["label",1,0,1,2]],0,[["keydown","handleKeys"]]],["hue-app","dp-alert",1,[["cards",16],["cookies",16],["group",16],["groups",16],["lights",2],["loading",16]]],["hue-card","dp-alert",1,[["alert",1,0,1,2],["bri",2,0,1,1],["lightId",1,0,"light-id",2],["lightName",1,0,"light-name",2],["mode",1,0,1,2],["on",2,0,1,4],["reachable",1,0,1,4]],0,[["rangeChagned","rangeChagned"]]],["hue-collection","dp-alert",1,[["group",1,0,1,4],["groups",1],["lights",1,0,1,1],["loading",1,0,1,4]]]]);
+})(window,document,{},"mycomponent","hydrated",[["dp-alert","dp-alert",1,[["alerted",2,0,1,4],["ms",2,0,1,8],["text",2,0,1,2],["toasty",32]]],["dp-range","dp-alert",1,[["ariaLabel",1,0,"aria-label",2],["ariaValueNow",1,0,"aria-value-now",8],["data",1,0,1,1],["disabled",1,0,1,4],["max",1,0,1,2],["min",1,0,1,2],["rangeValue",2,0,"range-value",2]]],["dp-switch","dp-switch",1,[["ariaLabel",1,0,"aria-label",2],["callback",1],["data",1,0,1,1],["disabled",1,0,1,4],["isChecked",1,0,"is-checked",4],["label",1,0,1,2]],0,[["keydown","handleKeys"]]],["hue-app","dp-alert",1,[["cards",16],["cookies",16],["group",16],["groups",16],["lights",2],["loading",16],["proxyServer",1,0,"proxy-server",2]]],["hue-card","dp-alert",1,[["alert",1,0,1,2],["bri",2,0,1,1],["lightId",1,0,"light-id",2],["lightName",1,0,"light-name",2],["mode",1,0,1,2],["on",2,0,1,4],["reachable",1,0,1,4]],0,[["rangeChagned","rangeChagned"]]],["hue-collection","dp-alert",1,[["group",1,0,1,4],["groups",1],["lights",1,0,1,1],["loading",1,0,1,4]]]]);

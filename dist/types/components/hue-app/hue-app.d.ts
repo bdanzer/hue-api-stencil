@@ -1,6 +1,7 @@
 import '../../stencil.core';
 export declare class HueApp {
     lights: object;
+    proxyServer: string;
     cards: any;
     cookies: any;
     loading: boolean;

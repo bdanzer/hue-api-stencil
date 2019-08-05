@@ -34,9 +34,6 @@
       ],
       "methods": [
         {
-          "name": "test"
-        },
-        {
           "name": "toasty"
         }
       ]
@@ -178,6 +175,11 @@
           "name": "lights",
           "mutable": true,
           "attr": "lights"
+        },
+        {
+          "name": "proxyServer",
+          "type": "String",
+          "attr": "proxy-server"
         }
       ],
       "states": [

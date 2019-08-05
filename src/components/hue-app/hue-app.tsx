@@ -12,6 +12,7 @@ import { toasty } from '../../utils/utils';
 export class HueApp {
   // @State() loading = true;
   @Prop({mutable: true}) lights: object;
+  @Prop() proxyServer: string;
 
   @State() cards: any;
   @State() cookies: any;
@@ -42,20 +43,24 @@ export class HueApp {
   }
 
   async controller() {
-    //Check auth if we came back from it
-    // await this.handlePostAuth();
-
     /**
      * Check if we have stored device id
      */
-    let context = await HueApi.getContext(this.cookies);
-    // console.log(context);
+    let context = await HueApi.setContext(this.cookies);
+
+    //Check auth if we came back from it
+    await this.handlePostAuth();
 
     /**
      * Basically if we have ever set up local or remote get the lights
      */
-    if (context.haveLocal && this.cookies['hueLocalSetup'] || !context.haveLocal && this.cookies['hueRemoteSetup']) {
+    if (context.haveLocal && this.cookies['hueLocalSetup']) {
       HueApi.username = this.cookies['username'];
+      this.setLights();
+    } else if (!context.haveLocal && this.cookies['hueRemoteUsername']) {
+      HueApi.proxyServer = this.proxyServer;
+      HueApi.username = this.cookies['hueRemoteUsername'];
+      HueApi.accessToken = this.cookies['hueToken'];
       this.setLights();
     }
   }
@@ -120,11 +125,30 @@ export class HueApp {
 
   async handlePostAuth() {
     if (-1 !== window.location.href.indexOf('?code')) {
+      if (this.cookies['hueRemoteSetup']) {
+        return; //return since we already set this up
+      }
+
       HueApi.postAuthHue = queryParse(window.location.href);
-      document.cookie = `postAuthHue=${JSON.stringify(HueApi.postAuthHue)};`
       
-      await HueApi.basicAuth();
       // await HueApi.digestAuth();
+
+      let { access_token } = await HueApi.basicAuth();
+      document.cookie = `hueToken=${access_token};`;
+
+      await HueApi.createWhiteList(access_token);
+      let successData = await HueApi.remoteRegisterDevice(access_token);
+
+      document.cookie = `hueRemoteUsername=${successData[0]['success']['username']};`;
+  
+      HueApi.username = successData[0]['success']['username'];
+
+      /**
+       * Update cookies
+       */
+      this.cookies = getCookies();
+
+      document.cookie = `hueRemoteSetup=true;`
     }
   }
 
@@ -160,7 +184,10 @@ export class HueApp {
           <a class="danzerpress-button-modern" onClick={() => this.handleLocalSetup()}>Re-Check</a>
         </div>
       </div> : '',
-      // (this.cookies['postAuthHue']) ? '' : <div class="enable-auth" onClick={(e) => {this.allowRemote(e)}}>Enable Remote Control</div>,
+      (!this.cookies['hueRemoteUsername']) ? 
+      <a class="danzerpress-button-modern enable-auth" onClick={(e) => {this.allowRemote(e)}}>
+        Enable Remote Control
+      </a> : '',
       <hue-collection
         class="danzerpress-flex-row"
         lights={this.lights}

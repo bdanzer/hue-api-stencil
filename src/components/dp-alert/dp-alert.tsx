@@ -9,18 +9,6 @@ export class DpAlert {
   @Prop({mutable: true}) text: string;
   @Prop({mutable: true}) ms: number;
 
-  componentDidLoad() {
-  }
-
-  componentWillUpdate() {
-    console.log('alerted', this.alerted);
-  }
-
-  @Method()
-  async test() {
-    console.log('works');
-  }
-
   @Method()
   async toasty(text, alert, ms) {
     this.alerted = alert;
@@ -35,7 +23,6 @@ export class DpAlert {
   }
 
   render() {
-    console.log('this alerted render', this.alerted, this.text);
     return (
       <div class={`dp-alert ${this.alerted ? 'on' : 'off'}`}>
         {!this.ms ? (

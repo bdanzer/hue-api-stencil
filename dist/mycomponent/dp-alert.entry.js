@@ -2,14 +2,6 @@
 const { h } = window.mycomponent;
 
 class DpAlert {
-    componentDidLoad() {
-    }
-    componentWillUpdate() {
-        console.log('alerted', this.alerted);
-    }
-    async test() {
-        console.log('works');
-    }
     async toasty(text, alert, ms) {
         this.alerted = alert;
         this.text = text;
@@ -21,7 +13,6 @@ class DpAlert {
         }
     }
     render() {
-        console.log('this alerted render', this.alerted, this.text);
         return (h("div", { class: `dp-alert ${this.alerted ? 'on' : 'off'}` },
             !this.ms ? (h("span", { class: "close-x", onClick: () => { this.alerted = false; } }, "x")) : '',
             h("slot", null, this.text)));
@@ -37,9 +28,6 @@ class DpAlert {
             "type": Number,
             "attr": "ms",
             "mutable": true
-        },
-        "test": {
-            "method": true
         },
         "text": {
             "type": String,
@@ -446,18 +434,23 @@ class HueApi {
         this.appId = authJson.appId;
         this.clientId = authJson.clientId;
         this.clientSecret = authJson.clientSecret;
-        //url changes 
+        this.accessToken = false;
+        this.isRemote = true;
     }
     changeApiContext(url) {
+        this.isRemote = false;
         this.apiUrl = url;
-        console.log(this.apiUrl);
     }
-    async getContext(cookies) {
+    async setContext(cookies) {
         let context = await this.haveLocal(), deviceId = false;
-        if (context.isLocal && context.id)
-            deviceId = context;
-        this.changeApiContext(`http://${context.internalipaddress}`);
-        if (cookies.deviceId) {
+        if (context.haveLocal && context.id) {
+            deviceId = context.id;
+            this.changeApiContext(`http://${context.internalipaddress}/api`);
+        }
+        else {
+            context['haveLocal'] = false;
+        }
+        if (cookies.deviceId && cookies.deviceId !== 'undefined') {
             deviceId = cookies.id;
         }
         document.cookie = `deviceId=${deviceId};`;
@@ -483,10 +476,10 @@ class HueApi {
         return await newDev.json();
     }
     getHueUrl(addOns = '') {
-        return `${this.apiUrl}/api/${addOns}`;
+        return `${this.apiUrl}/${addOns}`;
     }
     setGroups() {
-        this.groups = `${this.apiUrl}/api/${this.username}/schedules`;
+        this.groups = `${this.apiUrl}/${this.username}/schedules`;
     }
     async digestAuth() {
         const realm = 'oauth2_client@api.meethue.com';
@@ -511,7 +504,6 @@ class HueApi {
             }
         });
         accessData = await accessData.json();
-        console.log(accessData);
     }
     async haveLocal() {
         try {
@@ -527,61 +519,108 @@ class HueApi {
             console.log(e);
         }
     }
-    async setLightState(lightId, obj) {
-        try {
-            let response = await fetch(this.lightStateUrl(lightId), {
-                method: 'PUT',
-                body: JSON.stringify(obj),
-                headers: {
-                    "Access-Control-Request-Method": "POST",
-                    "Access-Control-Request-Headers": "Content-Type"
-                }
-            });
-            await response.json();
-        }
-        catch (_a) {
-            console.log('Error Something Went Wrong');
-        }
-    }
     lightStateUrl(lightId) {
         return this.getLightsUrl() + `/${lightId}/state`;
     }
     getLightsUrl() {
-        return `${this.apiUrl}/api/${this.username}/lights`;
+        return `${this.apiUrl}/${this.username}/lights`;
     }
     getLight(id) {
         return this.getLights(`${this.getLightsUrl()}/${id}`);
     }
     getGroupUrl() {
-        return `${this.apiUrl}/api/${this.username}/groups`;
+        return `${this.apiUrl}/${this.username}/groups`;
     }
     async basicAuth() {
         try {
-            let response = await fetch(`https://api.meethue.com/oauth2/token?code=${this.postAuthHue['code']}&grant_type=authorization_code`, {
+            let response = await fetch(this.proxyServer, {
                 method: "post",
                 headers: {
-                    "Authorization": `Basic ${this.getBase64()}`,
+                    "Authorization": `Basic QVloUEdXR0hHM3p4WWdRbkk5elMzajZ6M3lTR1JVcTI6dUFkeExBT1JoeU9vb3dnMw==`,
+                    "Target-URL": `https://api.meethue.com/oauth2/token?code=${this.postAuthHue['code']}&grant_type=authorization_code`
                 }
             });
             if (response.status === 200) {
-                console.log(response);
-                let data = await response.json();
-                console.log(data);
+                return await response.json();
             }
         }
         catch (e) {
             console.log(e);
         }
     }
+    async createWhiteList(accessToken) {
+        let response = await fetch(this.proxyServer, {
+            method: "put",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Target-URL": "https://api.meethue.com/bridge/0/config",
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                "linkbutton": true
+            })
+        });
+        return await response.json();
+    }
+    async remoteRegisterDevice(accessToken) {
+        let response = await fetch(this.proxyServer, {
+            method: "post",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Target-URL": "https://api.meethue.com/bridge/",
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                "devicetype": "lightly"
+            })
+        });
+        //returns username
+        return await response.json();
+    }
     async getLights(url) {
+        let headers = {};
+        let fetchUrl = url;
+        if (this.accessToken) {
+            fetchUrl = this.proxyServer;
+            Object.assign(headers, {
+                "Authorization": `Bearer ${this.accessToken}`,
+                "Target-Url": url
+            });
+        }
         try {
-            let response = await fetch(url, {
-                method: 'GET'
+            let response = await fetch(fetchUrl, {
+                method: 'GET',
+                headers: headers
             });
             return await response.json();
         }
         catch (e) {
             console.log('Error Something Went Wrong', e);
+        }
+    }
+    async setLightState(lightId, obj) {
+        let fetchUrl = this.lightStateUrl(lightId);
+        let headers = {
+            "Content-Type": "application/json"
+        };
+        if (this.accessToken) {
+            let targetUrl = fetchUrl;
+            fetchUrl = this.proxyServer;
+            Object.assign(headers, {
+                "Authorization": `Bearer ${this.accessToken}`,
+                "Target-Url": targetUrl
+            });
+        }
+        try {
+            let response = await fetch(fetchUrl, {
+                method: 'PUT',
+                body: JSON.stringify(obj),
+                headers: headers
+            });
+            await response.json();
+        }
+        catch (_a) {
+            console.log('Error Something Went Wrong');
         }
     }
 }
@@ -652,18 +691,23 @@ class HueApp {
         // console.log(this.cards);
     }
     async controller() {
-        //Check auth if we came back from it
-        // await this.handlePostAuth();
         /**
          * Check if we have stored device id
          */
-        let context = await HueApi$1.getContext(this.cookies);
-        // console.log(context);
+        let context = await HueApi$1.setContext(this.cookies);
+        //Check auth if we came back from it
+        await this.handlePostAuth();
         /**
          * Basically if we have ever set up local or remote get the lights
          */
-        if (context.haveLocal && this.cookies['hueLocalSetup'] || !context.haveLocal && this.cookies['hueRemoteSetup']) {
+        if (context.haveLocal && this.cookies['hueLocalSetup']) {
             HueApi$1.username = this.cookies['username'];
+            this.setLights();
+        }
+        else if (!context.haveLocal && this.cookies['hueRemoteUsername']) {
+            HueApi$1.proxyServer = this.proxyServer;
+            HueApi$1.username = this.cookies['hueRemoteUsername'];
+            HueApi$1.accessToken = this.cookies['hueToken'];
             this.setLights();
         }
     }
@@ -716,10 +760,22 @@ class HueApp {
     }
     async handlePostAuth() {
         if (-1 !== window.location.href.indexOf('?code')) {
+            if (this.cookies['hueRemoteSetup']) {
+                return; //return since we already set this up
+            }
             HueApi$1.postAuthHue = queryParse(window.location.href);
-            document.cookie = `postAuthHue=${JSON.stringify(HueApi$1.postAuthHue)};`;
-            await HueApi$1.basicAuth();
             // await HueApi.digestAuth();
+            let { access_token } = await HueApi$1.basicAuth();
+            document.cookie = `hueToken=${access_token};`;
+            await HueApi$1.createWhiteList(access_token);
+            let successData = await HueApi$1.remoteRegisterDevice(access_token);
+            document.cookie = `hueRemoteUsername=${successData[0]['success']['username']};`;
+            HueApi$1.username = successData[0]['success']['username'];
+            /**
+             * Update cookies
+             */
+            this.cookies = getCookies();
+            document.cookie = `hueRemoteSetup=true;`;
         }
     }
     allowRemote(e) {
@@ -746,7 +802,8 @@ class HueApp {
                         h("h2", null, "Setup"),
                         h("p", null, "To proceed with this set up push the button on the bridge and recheck."),
                         h("a", { class: "danzerpress-button-modern", onClick: () => this.handleLocalSetup() }, "Re-Check"))) : '',
-            // (this.cookies['postAuthHue']) ? '' : <div class="enable-auth" onClick={(e) => {this.allowRemote(e)}}>Enable Remote Control</div>,
+            (!this.cookies['hueRemoteUsername']) ?
+                h("a", { class: "danzerpress-button-modern enable-auth", onClick: (e) => { this.allowRemote(e); } }, "Enable Remote Control") : '',
             h("hue-collection", { class: "danzerpress-flex-row", lights: this.lights, loading: this.loading, group: this.group, groups: this.groups })
         ];
     }
@@ -771,6 +828,10 @@ class HueApp {
         },
         "loading": {
             "state": true
+        },
+        "proxyServer": {
+            "type": String,
+            "attr": "proxy-server"
         }
     }; }
     static get style() { return "\@import url(\"https://cdn.jsdelivr.net/gh/bdanzer/danzerpress-layouts\@master/danzerpress-layouts.css\");\n* {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n}\n*:before, *:after {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n}\n\nbody {\n  font-family: sans-serif;\n  padding-top: 40px;\n}\n\nimg {\n  width: 100%;\n  height: auto;\n}\n\n.danzerpress-modern-button:hover {\n  cursor: pointer;\n}\n\n.lds-ring {\n  display: inline-block;\n  position: relative;\n  width: 64px;\n  height: 64px;\n}\n\n.lds-ring div {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: block;\n  position: absolute;\n  width: 51px;\n  height: 51px;\n  margin: 6px;\n  border: 6px solid blueviolet;\n  border-radius: 50%;\n  -webkit-animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;\n  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;\n  border-color: blueviolet transparent transparent transparent;\n}\n\n.lds-ring div:nth-child(1) {\n  -webkit-animation-delay: -0.45s;\n  animation-delay: -0.45s;\n}\n\n.lds-ring div:nth-child(2) {\n  -webkit-animation-delay: -0.3s;\n  animation-delay: -0.3s;\n}\n\n.lds-ring div:nth-child(3) {\n  -webkit-animation-delay: -0.15s;\n  animation-delay: -0.15s;\n}\n\n\@-webkit-keyframes lds-ring {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}\n\n\@keyframes lds-ring {\n  0% {\n    -webkit-transform: rotate(0deg);\n    transform: rotate(0deg);\n  }\n  100% {\n    -webkit-transform: rotate(360deg);\n    transform: rotate(360deg);\n  }\n}"; }
@@ -876,7 +937,6 @@ class HueCollection {
     getGroups() {
         let cards = [];
         for (let room in this.groups) {
-            console.log(room);
             let lights = this.groups[room];
             cards.push((h("div", { class: "danzerpress-col-1" },
                 h("h2", null, room))));

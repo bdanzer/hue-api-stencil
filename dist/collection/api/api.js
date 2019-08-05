@@ -7,18 +7,23 @@ class HueApi {
         this.appId = authJson.appId;
         this.clientId = authJson.clientId;
         this.clientSecret = authJson.clientSecret;
-        //url changes 
+        this.accessToken = false;
+        this.isRemote = true;
     }
     changeApiContext(url) {
+        this.isRemote = false;
         this.apiUrl = url;
-        console.log(this.apiUrl);
     }
-    async getContext(cookies) {
-        let context = await this.haveLocal(), deviceId = false;
-        if (context.isLocal && context.id)
-            deviceId = context;
-        this.changeApiContext(`http://${context.internalipaddress}`);
-        if (cookies.deviceId) {
+    async setContext(cookies) {
+        let context = await this.haveLocal(), deviceId = false, testRemote = false;
+        if (!testRemote && context.haveLocal && context.id) {
+            deviceId = context.id;
+            this.changeApiContext(`http://${context.internalipaddress}/api`);
+        }
+        else {
+            context['haveLocal'] = false;
+        }
+        if (cookies.deviceId && cookies.deviceId !== 'undefined') {
             deviceId = cookies.id;
         }
         document.cookie = `deviceId=${deviceId};`;
@@ -44,10 +49,10 @@ class HueApi {
         return await newDev.json();
     }
     getHueUrl(addOns = '') {
-        return `${this.apiUrl}/api/${addOns}`;
+        return `${this.apiUrl}/${addOns}`;
     }
     setGroups() {
-        this.groups = `${this.apiUrl}/api/${this.username}/schedules`;
+        this.groups = `${this.apiUrl}/${this.username}/schedules`;
     }
     async digestAuth() {
         const realm = 'oauth2_client@api.meethue.com';
@@ -72,7 +77,6 @@ class HueApi {
             }
         });
         accessData = await accessData.json();
-        console.log(accessData);
     }
     async haveLocal() {
         try {
@@ -88,61 +92,108 @@ class HueApi {
             console.log(e);
         }
     }
-    async setLightState(lightId, obj) {
-        try {
-            let response = await fetch(this.lightStateUrl(lightId), {
-                method: 'PUT',
-                body: JSON.stringify(obj),
-                headers: {
-                    "Access-Control-Request-Method": "POST",
-                    "Access-Control-Request-Headers": "Content-Type"
-                }
-            });
-            await response.json();
-        }
-        catch (_a) {
-            console.log('Error Something Went Wrong');
-        }
-    }
     lightStateUrl(lightId) {
         return this.getLightsUrl() + `/${lightId}/state`;
     }
     getLightsUrl() {
-        return `${this.apiUrl}/api/${this.username}/lights`;
+        return `${this.apiUrl}/${this.username}/lights`;
     }
     getLight(id) {
         return this.getLights(`${this.getLightsUrl()}/${id}`);
     }
     getGroupUrl() {
-        return `${this.apiUrl}/api/${this.username}/groups`;
+        return `${this.apiUrl}/${this.username}/groups`;
     }
     async basicAuth() {
         try {
-            let response = await fetch(`https://api.meethue.com/oauth2/token?code=${this.postAuthHue['code']}&grant_type=authorization_code`, {
+            let response = await fetch(this.proxyServer, {
                 method: "post",
                 headers: {
-                    "Authorization": `Basic ${this.getBase64()}`,
+                    "Authorization": `Basic QVloUEdXR0hHM3p4WWdRbkk5elMzajZ6M3lTR1JVcTI6dUFkeExBT1JoeU9vb3dnMw==`,
+                    "Target-URL": `https://api.meethue.com/oauth2/token?code=${this.postAuthHue['code']}&grant_type=authorization_code`
                 }
             });
             if (response.status === 200) {
-                console.log(response);
-                let data = await response.json();
-                console.log(data);
+                return await response.json();
             }
         }
         catch (e) {
             console.log(e);
         }
     }
+    async createWhiteList(accessToken) {
+        let response = await fetch(this.proxyServer, {
+            method: "put",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Target-URL": "https://api.meethue.com/bridge/0/config",
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                "linkbutton": true
+            })
+        });
+        return await response.json();
+    }
+    async remoteRegisterDevice(accessToken) {
+        let response = await fetch(this.proxyServer, {
+            method: "post",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Target-URL": "https://api.meethue.com/bridge/",
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({
+                "devicetype": "lightly"
+            })
+        });
+        //returns username
+        return await response.json();
+    }
     async getLights(url) {
+        let headers = {};
+        let fetchUrl = url;
+        if (this.accessToken) {
+            fetchUrl = this.proxyServer;
+            Object.assign(headers, {
+                "Authorization": `Bearer ${this.accessToken}`,
+                "Target-Url": url
+            });
+        }
         try {
-            let response = await fetch(url, {
-                method: 'GET'
+            let response = await fetch(fetchUrl, {
+                method: 'GET',
+                headers: headers
             });
             return await response.json();
         }
         catch (e) {
             console.log('Error Something Went Wrong', e);
+        }
+    }
+    async setLightState(lightId, obj) {
+        let fetchUrl = this.lightStateUrl(lightId);
+        let headers = {
+            "Content-Type": "application/json"
+        };
+        if (this.accessToken) {
+            let targetUrl = fetchUrl;
+            fetchUrl = this.proxyServer;
+            Object.assign(headers, {
+                "Authorization": `Bearer ${this.accessToken}`,
+                "Target-Url": targetUrl
+            });
+        }
+        try {
+            let response = await fetch(fetchUrl, {
+                method: 'PUT',
+                body: JSON.stringify(obj),
+                headers: headers
+            });
+            await response.json();
+        }
+        catch (_a) {
+            console.log('Error Something Went Wrong');
         }
     }
 }
