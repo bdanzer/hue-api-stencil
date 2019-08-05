@@ -443,7 +443,11 @@ class HueApi {
     }
     async setContext(cookies) {
         let context = await this.haveLocal(), deviceId = false;
-        {
+        if (context.haveLocal && context.id) {
+            deviceId = context.id;
+            this.changeApiContext(`http://${context.internalipaddress}/api`);
+        }
+        else {
             context['haveLocal'] = false;
         }
         if (cookies.deviceId && cookies.deviceId !== 'undefined') {
