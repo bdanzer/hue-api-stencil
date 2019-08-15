@@ -1,4 +1,4 @@
-import { Component, Event, Prop, EventEmitter, Listen } from '@stencil/core';
+import { Component, h, Event, Prop, EventEmitter, Listen } from '@stencil/core';
 
 @Component({
   tag: 'dp-switch',

@@ -16,16 +16,6 @@
 
 ## Methods
 
-### `test() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
 ### `toasty(text: any, alert: any, ms: any) => Promise<void>`
 
 

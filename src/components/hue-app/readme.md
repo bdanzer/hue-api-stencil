@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     |
-| -------- | --------- | ----------- | -------- |
-| `lights` | --        |             | `object` |
+| Property      | Attribute      | Description | Type     |
+| ------------- | -------------- | ----------- | -------- |
+| `lights`      | --             |             | `object` |
+| `proxyServer` | `proxy-server` |             | `string` |
 
 
 ----------------------------------------------

@@ -5,25 +5,16 @@
  */
 
 
-import '@stencil/core';
-
-
+import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 
 
 export namespace Components {
-
   interface DpAlert {
     'alerted': boolean;
     'ms': number;
     'text': string;
     'toasty': (text: any, alert: any, ms: any) => Promise<void>;
   }
-  interface DpAlertAttributes extends StencilHTMLAttributes {
-    'alerted'?: boolean;
-    'ms'?: number;
-    'text'?: string;
-  }
-
   interface DpRange {
     'ariaLabel': string;
     'ariaValueNow': number;
@@ -33,18 +24,6 @@ export namespace Components {
     'min': string;
     'rangeValue': string;
   }
-  interface DpRangeAttributes extends StencilHTMLAttributes {
-    'ariaLabel'?: string;
-    'ariaValueNow'?: number;
-    'data'?: any;
-    'disabled'?: boolean;
-    'max'?: string;
-    'min'?: string;
-    'onInputChanged'?: (event: CustomEvent) => void;
-    'onRangeChagned'?: (event: CustomEvent) => void;
-    'rangeValue'?: string;
-  }
-
   interface DpSwitch {
     'ariaLabel': string;
     'callback': Function;
@@ -53,25 +32,10 @@ export namespace Components {
     'isChecked': boolean;
     'label': string;
   }
-  interface DpSwitchAttributes extends StencilHTMLAttributes {
-    'ariaLabel'?: string;
-    'callback'?: Function;
-    'data'?: any;
-    'disabled'?: boolean;
-    'isChecked'?: boolean;
-    'label'?: string;
-    'onSwitchClicked'?: (event: CustomEvent) => void;
-  }
-
   interface HueApp {
     'lights': object;
     'proxyServer': string;
   }
-  interface HueAppAttributes extends StencilHTMLAttributes {
-    'lights'?: object;
-    'proxyServer'?: string;
-  }
-
   interface HueCard {
     'alert': string;
     'bri': any;
@@ -81,48 +45,26 @@ export namespace Components {
     'on': boolean;
     'reachable': boolean;
   }
-  interface HueCardAttributes extends StencilHTMLAttributes {
-    'alert'?: string;
-    'bri'?: any;
-    'lightId'?: string;
-    'lightName'?: string;
-    'mode'?: string;
-    'on'?: boolean;
-    'reachable'?: boolean;
-  }
-
   interface HueCollection {
     'group': boolean;
     'groups': object;
     'lights': any;
     'loading': boolean;
   }
-  interface HueCollectionAttributes extends StencilHTMLAttributes {
-    'group'?: boolean;
-    'groups'?: object;
-    'lights'?: any;
-    'loading'?: boolean;
+  interface HueHeader {}
+  interface HueLightGroup {
+    'groups': any;
+  }
+  interface HueRowTitle {
+    'any_on': boolean;
+    'groupData': any;
+    'groupId': string;
+    'reachable': any;
+    'title': string;
   }
 }
 
 declare global {
-  interface StencilElementInterfaces {
-    'DpAlert': Components.DpAlert;
-    'DpRange': Components.DpRange;
-    'DpSwitch': Components.DpSwitch;
-    'HueApp': Components.HueApp;
-    'HueCard': Components.HueCard;
-    'HueCollection': Components.HueCollection;
-  }
-
-  interface StencilIntrinsicElements {
-    'dp-alert': Components.DpAlertAttributes;
-    'dp-range': Components.DpRangeAttributes;
-    'dp-switch': Components.DpSwitchAttributes;
-    'hue-app': Components.HueAppAttributes;
-    'hue-card': Components.HueCardAttributes;
-    'hue-collection': Components.HueCollectionAttributes;
-  }
 
 
   interface HTMLDpAlertElement extends Components.DpAlert, HTMLStencilElement {}
@@ -161,31 +103,114 @@ declare global {
     new (): HTMLHueCollectionElement;
   };
 
-  interface HTMLElementTagNameMap {
-    'dp-alert': HTMLDpAlertElement
-    'dp-range': HTMLDpRangeElement
-    'dp-switch': HTMLDpSwitchElement
-    'hue-app': HTMLHueAppElement
-    'hue-card': HTMLHueCardElement
-    'hue-collection': HTMLHueCollectionElement
-  }
+  interface HTMLHueHeaderElement extends Components.HueHeader, HTMLStencilElement {}
+  var HTMLHueHeaderElement: {
+    prototype: HTMLHueHeaderElement;
+    new (): HTMLHueHeaderElement;
+  };
 
-  interface ElementTagNameMap {
+  interface HTMLHueLightGroupElement extends Components.HueLightGroup, HTMLStencilElement {}
+  var HTMLHueLightGroupElement: {
+    prototype: HTMLHueLightGroupElement;
+    new (): HTMLHueLightGroupElement;
+  };
+
+  interface HTMLHueRowTitleElement extends Components.HueRowTitle, HTMLStencilElement {}
+  var HTMLHueRowTitleElement: {
+    prototype: HTMLHueRowTitleElement;
+    new (): HTMLHueRowTitleElement;
+  };
+  interface HTMLElementTagNameMap {
     'dp-alert': HTMLDpAlertElement;
     'dp-range': HTMLDpRangeElement;
     'dp-switch': HTMLDpSwitchElement;
     'hue-app': HTMLHueAppElement;
     'hue-card': HTMLHueCardElement;
     'hue-collection': HTMLHueCollectionElement;
+    'hue-header': HTMLHueHeaderElement;
+    'hue-light-group': HTMLHueLightGroupElement;
+    'hue-row-title': HTMLHueRowTitleElement;
   }
-
-
-  export namespace JSX {
-    export interface Element {}
-    export interface IntrinsicElements extends StencilIntrinsicElements {
-      [tagName: string]: any;
-    }
-  }
-  export interface HTMLAttributes extends StencilHTMLAttributes {}
-
 }
+
+declare namespace LocalJSX {
+  interface DpAlert extends JSXBase.HTMLAttributes<HTMLDpAlertElement> {
+    'alerted'?: boolean;
+    'ms'?: number;
+    'text'?: string;
+  }
+  interface DpRange extends JSXBase.HTMLAttributes<HTMLDpRangeElement> {
+    'ariaLabel'?: string;
+    'ariaValueNow'?: number;
+    'data'?: any;
+    'disabled'?: boolean;
+    'max'?: string;
+    'min'?: string;
+    'onInputChanged'?: (event: CustomEvent<any>) => void;
+    'onRangeChagned'?: (event: CustomEvent<any>) => void;
+    'rangeValue'?: string;
+  }
+  interface DpSwitch extends JSXBase.HTMLAttributes<HTMLDpSwitchElement> {
+    'ariaLabel'?: string;
+    'callback'?: Function;
+    'data'?: any;
+    'disabled'?: boolean;
+    'isChecked'?: boolean;
+    'label'?: string;
+    'onSwitchClicked'?: (event: CustomEvent<any>) => void;
+  }
+  interface HueApp extends JSXBase.HTMLAttributes<HTMLHueAppElement> {
+    'lights'?: object;
+    'proxyServer'?: string;
+  }
+  interface HueCard extends JSXBase.HTMLAttributes<HTMLHueCardElement> {
+    'alert'?: string;
+    'bri'?: any;
+    'lightId'?: string;
+    'lightName'?: string;
+    'mode'?: string;
+    'on'?: boolean;
+    'reachable'?: boolean;
+  }
+  interface HueCollection extends JSXBase.HTMLAttributes<HTMLHueCollectionElement> {
+    'group'?: boolean;
+    'groups'?: object;
+    'lights'?: any;
+    'loading'?: boolean;
+  }
+  interface HueHeader extends JSXBase.HTMLAttributes<HTMLHueHeaderElement> {}
+  interface HueLightGroup extends JSXBase.HTMLAttributes<HTMLHueLightGroupElement> {
+    'groups'?: any;
+  }
+  interface HueRowTitle extends JSXBase.HTMLAttributes<HTMLHueRowTitleElement> {
+    'any_on'?: boolean;
+    'groupData'?: any;
+    'groupId'?: string;
+    'onGroupOff'?: (event: CustomEvent<any>) => void;
+    'reachable'?: any;
+    'title'?: string;
+  }
+
+  interface IntrinsicElements {
+    'dp-alert': DpAlert;
+    'dp-range': DpRange;
+    'dp-switch': DpSwitch;
+    'hue-app': HueApp;
+    'hue-card': HueCard;
+    'hue-collection': HueCollection;
+    'hue-header': HueHeader;
+    'hue-light-group': HueLightGroup;
+    'hue-row-title': HueRowTitle;
+  }
+}
+
+export { LocalJSX as JSX };
+
+
+declare module "@stencil/core" {
+  export namespace JSX {
+    interface IntrinsicElements extends LocalJSX.IntrinsicElements {}
+  }
+}
+
+

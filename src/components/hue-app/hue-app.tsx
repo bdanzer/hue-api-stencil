@@ -1,4 +1,4 @@
-import { Component, Prop, State } from '@stencil/core';
+import { Component, h, Prop, State } from '@stencil/core';
 import HueApi from '../../api/api';
 import { getCookies } from '../../utils/utils';
 import { queryParse } from '../../utils/utils';
@@ -68,9 +68,11 @@ export class HueApp {
   async handleGroupLights() {
     this.loading = true;
     let groupData = await HueApi.getLights(HueApi.getGroupUrl());
+
+    console.log('groupData', groupData);
     
-    for (var index in groupData) {
-      let group = groupData[index],
+    for (var groupId in groupData) {
+      let group = groupData[groupId],
           lightGroup = group.lights,
           groupName = group.name;
 
@@ -87,9 +89,15 @@ export class HueApp {
 
       for (var i = 0; i < lights.length; i++) {
         if (this.groups[groupName]) {
-          this.groups[groupName].push(lights[i]);
+          this.groups[groupName]['lights'].push(lights[i]);
         } else {
-          this.groups[groupName] = [lights[i]];
+          Object.assign(this.groups, {
+            [groupName] : {
+              'lights': [lights[i]],
+              'groupId': groupId,
+              'state': group.state
+            }
+          });
         }
       }
     }
@@ -178,6 +186,10 @@ export class HueApp {
         isChecked={this.group}
         callback={this.handleGroups.bind(this)}>
       </dp-switch>,
+      (!this.cookies['hueRemoteUsername']) ? 
+      <a class="danzerpress-button-modern enable-auth" onClick={(e) => {this.allowRemote(e)}}>
+        Enable Remote Control
+      </a> : '',
       (!this.cookies['hueLocalSetup']) ? 
       <div class="danzerpress-two-thirds danzerpress-col-center">
         <div class="danzerpress-box danzerpress-shadow-2">
@@ -186,10 +198,6 @@ export class HueApp {
           <a class="danzerpress-button-modern" onClick={() => this.handleLocalSetup()}>Re-Check</a>
         </div>
       </div> : '',
-      (!this.cookies['hueRemoteUsername']) ? 
-      <a class="danzerpress-button-modern enable-auth" onClick={(e) => {this.allowRemote(e)}}>
-        Enable Remote Control
-      </a> : '',
       <hue-collection
         class="danzerpress-flex-row"
         lights={this.lights}

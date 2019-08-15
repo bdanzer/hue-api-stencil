@@ -22,6 +22,7 @@ declare class HueApi {
     digestAuth(): Promise<void>;
     haveLocal(): Promise<any>;
     lightStateUrl(lightId: any): string;
+    groupStateUrl(groupId: any): string;
     getLightsUrl(): string;
     getLight(id: any): Promise<any>;
     getGroupUrl(): string;
@@ -29,6 +30,7 @@ declare class HueApi {
     createWhiteList(accessToken: any): Promise<any>;
     remoteRegisterDevice(accessToken: any): Promise<any>;
     getLights(url: any): Promise<any>;
+    setGroupState(groupId: any, obj: any): Promise<void>;
     setLightState(lightId: any, obj: any): Promise<void>;
 }
 declare const _default: HueApi;

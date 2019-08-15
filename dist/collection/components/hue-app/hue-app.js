@@ -1,3 +1,4 @@
+import { h } from "@stencil/core";
 import HueApi from '../../api/api';
 import { getCookies } from '../../utils/utils';
 import { queryParse } from '../../utils/utils';
@@ -49,8 +50,9 @@ export class HueApp {
     async handleGroupLights() {
         this.loading = true;
         let groupData = await HueApi.getLights(HueApi.getGroupUrl());
-        for (var index in groupData) {
-            let group = groupData[index], lightGroup = group.lights, groupName = group.name;
+        console.log('groupData', groupData);
+        for (var groupId in groupData) {
+            let group = groupData[groupId], lightGroup = group.lights, groupName = group.name;
             /**
              * looping a group of lights
              */
@@ -61,10 +63,16 @@ export class HueApp {
             let lights = await Promise.all(promises);
             for (var i = 0; i < lights.length; i++) {
                 if (this.groups[groupName]) {
-                    this.groups[groupName].push(lights[i]);
+                    this.groups[groupName]['lights'].push(lights[i]);
                 }
                 else {
-                    this.groups[groupName] = [lights[i]];
+                    Object.assign(this.groups, {
+                        [groupName]: {
+                            'lights': [lights[i]],
+                            'groupId': groupId,
+                            'state': group.state
+                        }
+                    });
                 }
             }
         }
@@ -132,43 +140,63 @@ export class HueApp {
     render() {
         return [
             h("dp-switch", { label: "Sort by Groups", isChecked: this.group, callback: this.handleGroups.bind(this) }),
+            (!this.cookies['hueRemoteUsername']) ?
+                h("a", { class: "danzerpress-button-modern enable-auth", onClick: (e) => { this.allowRemote(e); } }, "Enable Remote Control") : '',
             (!this.cookies['hueLocalSetup']) ?
                 h("div", { class: "danzerpress-two-thirds danzerpress-col-center" },
                     h("div", { class: "danzerpress-box danzerpress-shadow-2" },
                         h("h2", null, "Setup"),
                         h("p", null, "To proceed with this set up push the button on the bridge and recheck."),
                         h("a", { class: "danzerpress-button-modern", onClick: () => this.handleLocalSetup() }, "Re-Check"))) : '',
-            (!this.cookies['hueRemoteUsername']) ?
-                h("a", { class: "danzerpress-button-modern enable-auth", onClick: (e) => { this.allowRemote(e); } }, "Enable Remote Control") : '',
             h("hue-collection", { class: "danzerpress-flex-row", lights: this.lights, loading: this.loading, group: this.group, groups: this.groups })
         ];
     }
     static get is() { return "hue-app"; }
+    static get originalStyleUrls() { return {
+        "$": ["hue-app.scss"]
+    }; }
+    static get styleUrls() { return {
+        "$": ["hue-app.css"]
+    }; }
     static get properties() { return {
-        "cards": {
-            "state": true
-        },
-        "cookies": {
-            "state": true
-        },
-        "group": {
-            "state": true
-        },
-        "groups": {
-            "state": true
-        },
         "lights": {
-            "type": "Any",
-            "attr": "lights",
-            "mutable": true
-        },
-        "loading": {
-            "state": true
+            "type": "unknown",
+            "mutable": true,
+            "complexType": {
+                "original": "object",
+                "resolved": "object",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            }
         },
         "proxyServer": {
-            "type": String,
-            "attr": "proxy-server"
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "proxy-server",
+            "reflect": false
         }
     }; }
-    static get style() { return "/**style-placeholder:hue-app:**/"; }
+    static get states() { return {
+        "cards": {},
+        "cookies": {},
+        "loading": {},
+        "group": {},
+        "groups": {}
+    }; }
 }

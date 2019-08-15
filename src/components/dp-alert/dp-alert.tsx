@@ -1,4 +1,4 @@
-import { Component, Prop, Method } from '@stencil/core';
+import { Component, Prop, Method, h } from '@stencil/core';
 
 @Component({
   tag: 'dp-alert',
@@ -28,7 +28,7 @@ export class DpAlert {
         {!this.ms ? (
           <span class="close-x" onClick={() => {this.alerted = false}}>x</span>
         ) : ''}
-        <slot>{this.text}</slot>
+        {this.text}
       </div>
     );
   }

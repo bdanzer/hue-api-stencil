@@ -95,6 +95,9 @@ class HueApi {
     lightStateUrl(lightId) {
         return this.getLightsUrl() + `/${lightId}/state`;
     }
+    groupStateUrl(groupId) {
+        return `${this.apiUrl}/${this.username}/groups/${groupId}/action`;
+    }
     getLightsUrl() {
         return `${this.apiUrl}/${this.username}/lights`;
     }
@@ -111,7 +114,7 @@ class HueApi {
             let response = await fetch(this.proxyServer, {
                 method: "post",
                 headers: {
-                    "Authorization": `Basic QVloUEdXR0hHM3p4WWdRbkk5elMzajZ6M3lTR1JVcTI6dUFkeExBT1JoeU9vb3dnMw==`,
+                    "Authorization": `Basic ${this.getBase64()}`,
                     "Target-URL": `https://api.meethue.com/oauth2/token?code=${this.postAuthHue['code']}&grant_type=authorization_code`
                 }
             });
@@ -171,6 +174,31 @@ class HueApi {
         }
         catch (e) {
             console.log('Error Something Went Wrong', e);
+        }
+    }
+    async setGroupState(groupId, obj) {
+        let fetchUrl = this.groupStateUrl(groupId);
+        let headers = {
+            "Content-Type": "application/json"
+        };
+        if (this.accessToken) {
+            let targetUrl = fetchUrl;
+            fetchUrl = this.proxyServer;
+            Object.assign(headers, {
+                "Authorization": `Bearer ${this.accessToken}`,
+                "Target-Url": targetUrl
+            });
+        }
+        try {
+            let response = await fetch(fetchUrl, {
+                method: 'PUT',
+                body: JSON.stringify(obj),
+                headers: headers
+            });
+            await response.json();
+        }
+        catch (_a) {
+            console.log('Error Something Went Wrong');
         }
     }
     async setLightState(lightId, obj) {

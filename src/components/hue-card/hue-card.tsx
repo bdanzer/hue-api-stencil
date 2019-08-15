@@ -1,4 +1,4 @@
-import { Component, Prop, Listen } from '@stencil/core';
+import { Component, h, Prop, Listen } from '@stencil/core';
 import HueApi from '../../api/api';
 
 @Component({
@@ -24,12 +24,24 @@ export class HueCard {
     this.bri = parseInt((data.detail.event.target as HTMLInputElement).value);
   }
 
+  @Listen('GroupOff')
+  handleLightOff(lightId) {
+    console.log(lightId);
+    if (parseInt(this.lightId) === parseInt(lightId)) {
+      this.toggle();
+    }
+  }
+
   // @Listen('inputChanged')
   // inputChanged(data) {
   //   if (this.reachable) {
       
   //   }
   // }
+
+  toggle() {
+    this.on = !this.on;
+  }
 
   getPercentage(number) {
     let percentage = ((254 - parseInt(number)) / 254 * 100) - 100
@@ -40,7 +52,7 @@ export class HueCard {
   switchClicked(_e) {
     if (this.lightId && this.reachable) {
       HueApi.setLightState(this.lightId, {'on': !this.on});
-      this.on = !this.on;
+      this.toggle();
     }
   }
 

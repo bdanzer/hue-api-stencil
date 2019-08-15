@@ -1,3 +1,4 @@
+import { h } from "@stencil/core";
 import HueApi from '../../api/api';
 export class HueCard {
     rangeChagned(data) {
@@ -7,11 +8,20 @@ export class HueCard {
         }
         this.bri = parseInt(data.detail.event.target.value);
     }
+    handleLightOff(lightId) {
+        console.log(lightId);
+        if (parseInt(this.lightId) === parseInt(lightId)) {
+            this.toggle();
+        }
+    }
     // @Listen('inputChanged')
     // inputChanged(data) {
     //   if (this.reachable) {
     //   }
     // }
+    toggle() {
+        this.on = !this.on;
+    }
     getPercentage(number) {
         let percentage = ((254 - parseInt(number)) / 254 * 100) - 100;
         let positiveNumber = Math.abs(percentage);
@@ -20,7 +30,7 @@ export class HueCard {
     switchClicked(_e) {
         if (this.lightId && this.reachable) {
             HueApi.setLightState(this.lightId, { 'on': !this.on });
-            this.on = !this.on;
+            this.toggle();
         }
     }
     render() {
@@ -42,41 +52,144 @@ export class HueCard {
         ];
     }
     static get is() { return "hue-card"; }
+    static get originalStyleUrls() { return {
+        "$": ["hue-card.scss"]
+    }; }
+    static get styleUrls() { return {
+        "$": ["hue-card.css"]
+    }; }
     static get properties() { return {
-        "alert": {
-            "type": String,
-            "attr": "alert"
-        },
         "bri": {
-            "type": "Any",
-            "attr": "bri",
-            "mutable": true
-        },
-        "lightId": {
-            "type": String,
-            "attr": "light-id"
-        },
-        "lightName": {
-            "type": String,
-            "attr": "light-name"
-        },
-        "mode": {
-            "type": String,
-            "attr": "mode"
+            "type": "any",
+            "mutable": true,
+            "complexType": {
+                "original": "any",
+                "resolved": "any",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "bri",
+            "reflect": false
         },
         "on": {
-            "type": Boolean,
-            "attr": "on",
-            "mutable": true
+            "type": "boolean",
+            "mutable": true,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "on",
+            "reflect": false
+        },
+        "mode": {
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "mode",
+            "reflect": false
+        },
+        "alert": {
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "alert",
+            "reflect": false
         },
         "reachable": {
-            "type": Boolean,
-            "attr": "reachable"
+            "type": "boolean",
+            "mutable": false,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "reachable",
+            "reflect": false
+        },
+        "lightName": {
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "light-name",
+            "reflect": false
+        },
+        "lightId": {
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "light-id",
+            "reflect": false
         }
     }; }
     static get listeners() { return [{
             "name": "rangeChagned",
-            "method": "rangeChagned"
+            "method": "rangeChagned",
+            "target": undefined,
+            "capture": false,
+            "passive": false
+        }, {
+            "name": "GroupOff",
+            "method": "handleLightOff",
+            "target": undefined,
+            "capture": false,
+            "passive": false
         }]; }
-    static get style() { return "/**style-placeholder:hue-card:**/"; }
 }

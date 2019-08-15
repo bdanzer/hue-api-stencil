@@ -25,6 +25,7 @@ img {
   position: relative;
   width: 64px;
   height: 64px;
+  margin: auto;
 }
 
 .lds-ring div {
@@ -60,6 +61,10 @@ img {
     transform: rotate(360deg);
   }
 }
+.hue-app:not(.hydrated) {
+  visibility: hidden;
+}
+
 /**
 **Button Start
 **/

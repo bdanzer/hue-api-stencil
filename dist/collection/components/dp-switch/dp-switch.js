@@ -1,3 +1,4 @@
+import { h } from "@stencil/core";
 export class Switch {
     constructor() {
         this.disabled = false;
@@ -14,42 +15,140 @@ export class Switch {
             h("span", { tabIndex: (this.disabled) ? -1 : 0, onClick: (e) => this.callback(e), "aria-label": `Turn off ${this.ariaLabel} light` })));
     }
     static get is() { return "dp-switch"; }
+    static get originalStyleUrls() { return {
+        "$": ["dp-switch.scss"]
+    }; }
+    static get styleUrls() { return {
+        "$": ["dp-switch.css"]
+    }; }
     static get properties() { return {
-        "ariaLabel": {
-            "type": String,
-            "attr": "aria-label"
-        },
-        "callback": {
-            "type": "Any",
-            "attr": "callback"
+        "isChecked": {
+            "type": "boolean",
+            "mutable": false,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "is-checked",
+            "reflect": false
         },
         "data": {
-            "type": "Any",
-            "attr": "data"
-        },
-        "disabled": {
-            "type": Boolean,
-            "attr": "disabled"
-        },
-        "isChecked": {
-            "type": Boolean,
-            "attr": "is-checked"
+            "type": "any",
+            "mutable": false,
+            "complexType": {
+                "original": "any",
+                "resolved": "any",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "data",
+            "reflect": false
         },
         "label": {
-            "type": String,
-            "attr": "label"
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "label",
+            "reflect": false
+        },
+        "ariaLabel": {
+            "type": "string",
+            "mutable": false,
+            "complexType": {
+                "original": "string",
+                "resolved": "string",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "aria-label",
+            "reflect": false
+        },
+        "callback": {
+            "type": "unknown",
+            "mutable": false,
+            "complexType": {
+                "original": "Function",
+                "resolved": "Function",
+                "references": {
+                    "Function": {
+                        "location": "global"
+                    }
+                }
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            }
+        },
+        "disabled": {
+            "type": "boolean",
+            "mutable": false,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "disabled",
+            "reflect": false,
+            "defaultValue": "false"
         }
     }; }
     static get events() { return [{
-            "name": "switchClicked",
             "method": "switchClicked",
+            "name": "switchClicked",
             "bubbles": true,
             "cancelable": true,
-            "composed": true
+            "composed": true,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "complexType": {
+                "original": "any",
+                "resolved": "any",
+                "references": {}
+            }
         }]; }
     static get listeners() { return [{
             "name": "keydown",
-            "method": "handleKeys"
+            "method": "handleKeys",
+            "target": undefined,
+            "capture": false,
+            "passive": false
         }]; }
-    static get style() { return "/**style-placeholder:dp-switch:**/"; }
 }

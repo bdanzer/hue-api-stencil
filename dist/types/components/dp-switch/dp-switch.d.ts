@@ -1,4 +1,3 @@
-import '../../stencil.core';
 import { EventEmitter } from '../../stencil.core';
 export declare class Switch {
     switchClicked: EventEmitter;
@@ -9,5 +8,5 @@ export declare class Switch {
     callback: Function;
     disabled: boolean;
     handleKeys(ev: KeyboardEvent): void;
-    render(): JSX.Element;
+    render(): any;
 }

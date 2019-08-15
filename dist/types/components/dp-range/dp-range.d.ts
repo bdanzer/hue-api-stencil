@@ -1,4 +1,3 @@
-import '../../stencil.core';
 import { EventEmitter } from '../../stencil.core';
 export declare class Range {
     rangeValue: string;
@@ -10,5 +9,5 @@ export declare class Range {
     disabled: boolean;
     rangeChagned: EventEmitter;
     inputChanged: EventEmitter;
-    render(): JSX.Element;
+    render(): any;
 }

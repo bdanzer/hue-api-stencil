@@ -1,0 +1,6 @@
+import { p as patchBrowser, g as globals, b as bootstrapLazy } from './chunk-b8d63b94.js';
+
+patchBrowser().then(options => {
+  globals();
+  return bootstrapLazy([["hue-collection",[[0,"hue-collection",{"loading":[4],"lights":[8],"group":[4],"groups":[16]}]]],["hue-app",[[0,"hue-app",{"lights":[1040],"proxyServer":[1,"proxy-server"],"cards":[32],"cookies":[32],"loading":[32],"group":[32],"groups":[32]}]]],["hue-header",[[0,"hue-header"]]],["dp-alert",[[0,"dp-alert",{"alerted":[1028],"text":[1025],"ms":[1026],"toasty":[64]}]]],["hue-card",[[0,"hue-card",{"bri":[1032],"on":[1028],"mode":[1],"alert":[1],"reachable":[4],"lightName":[1,"light-name"],"lightId":[1,"light-id"]},[[0,"rangeChagned","rangeChagned"],[0,"GroupOff","handleLightOff"]]]]],["hue-row-title",[[0,"hue-row-title",{"title":[1],"groupId":[1,"group-id"],"reachable":[8],"any_on":[1028],"groupData":[8,"group-data"]}]]],["dp-range",[[0,"dp-range",{"rangeValue":[1025,"range-value"],"min":[1],"max":[1],"data":[8],"ariaLabel":[1,"aria-label"],"ariaValueNow":[2,"aria-value-now"],"disabled":[4]}]]],["dp-switch",[[0,"dp-switch",{"isChecked":[4,"is-checked"],"data":[8],"label":[1],"ariaLabel":[1,"aria-label"],"callback":[16],"disabled":[4]},[[0,"keydown","handleKeys"]]]]],["hue-light-group",[[0,"hue-light-group",{"groups":[1032]}]]]], options);
+});

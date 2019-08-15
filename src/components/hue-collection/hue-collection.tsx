@@ -1,4 +1,4 @@
-import { Component, Prop } from '@stencil/core';
+import { Component, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'hue-collection',
@@ -33,39 +33,17 @@ export class HueCollection {
     return cards;
   }
 
-  getGroups() {
-    console.log(this.lights);
-    let cards = [];
-    
-    for (let room in this.groups) {
-      let lights = this.groups[room];
-      cards.push((
-        <div class="danzerpress-col-1">
-          <h2>{room}</h2>
-        </div>
-      ));
-
-      lights.forEach((light) => {
-        cards.push((
-          <hue-card 
-            class='danzerpress-col-3'
-            {...light.state} 
-            lightName={light.name} 
-            lightId={light.lightId}>
-          </hue-card>
-        ));
-      });
-    }
-
-    return cards;
-  }
-
   render() {
     return this.loading ? (
       <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
     ) : (
       <div class="hue-collection danzerpress-flex-row">
-        {(this.group) ? this.getGroups() : this.getCards()}
+        {(this.group) ? 
+          <hue-light-group
+            groups={this.groups}>
+          </hue-light-group> : 
+          this.getCards()
+        }
       </div>
     );
   }

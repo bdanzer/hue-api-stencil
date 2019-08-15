@@ -1,3 +1,4 @@
+import { h } from "@stencil/core";
 export class HueCollection {
     constructor() {
         this.loading = false;
@@ -13,44 +14,89 @@ export class HueCollection {
         }
         return cards;
     }
-    getGroups() {
-        console.log(this.lights);
-        let cards = [];
-        for (let room in this.groups) {
-            let lights = this.groups[room];
-            cards.push((h("div", { class: "danzerpress-col-1" },
-                h("h2", null, room))));
-            lights.forEach((light) => {
-                cards.push((h("hue-card", Object.assign({ class: 'danzerpress-col-3' }, light.state, { lightName: light.name, lightId: light.lightId }))));
-            });
-        }
-        return cards;
-    }
     render() {
         return this.loading ? (h("div", { class: "lds-ring" },
             h("div", null),
             h("div", null),
             h("div", null),
-            h("div", null))) : (h("div", { class: "hue-collection danzerpress-flex-row" }, (this.group) ? this.getGroups() : this.getCards()));
+            h("div", null))) : (h("div", { class: "hue-collection danzerpress-flex-row" }, (this.group) ?
+            h("hue-light-group", { groups: this.groups }) :
+            this.getCards()));
     }
     static get is() { return "hue-collection"; }
+    static get originalStyleUrls() { return {
+        "$": ["hue-collection.scss"]
+    }; }
+    static get styleUrls() { return {
+        "$": ["hue-collection.css"]
+    }; }
     static get properties() { return {
-        "group": {
-            "type": Boolean,
-            "attr": "group"
-        },
-        "groups": {
-            "type": "Any",
-            "attr": "groups"
+        "loading": {
+            "type": "boolean",
+            "mutable": false,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "loading",
+            "reflect": false,
+            "defaultValue": "false"
         },
         "lights": {
-            "type": "Any",
-            "attr": "lights"
+            "type": "any",
+            "mutable": false,
+            "complexType": {
+                "original": "any",
+                "resolved": "any",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "lights",
+            "reflect": false
         },
-        "loading": {
-            "type": Boolean,
-            "attr": "loading"
+        "group": {
+            "type": "boolean",
+            "mutable": false,
+            "complexType": {
+                "original": "boolean",
+                "resolved": "boolean",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            },
+            "attribute": "group",
+            "reflect": false
+        },
+        "groups": {
+            "type": "unknown",
+            "mutable": false,
+            "complexType": {
+                "original": "object",
+                "resolved": "object",
+                "references": {}
+            },
+            "required": false,
+            "optional": false,
+            "docs": {
+                "tags": [],
+                "text": ""
+            }
         }
     }; }
-    static get style() { return "/**style-placeholder:hue-collection:**/"; }
 }

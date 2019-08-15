@@ -1,4 +1,3 @@
-import '../../stencil.core';
 export declare class HueApp {
     lights: object;
     proxyServer: string;
@@ -17,5 +16,5 @@ export declare class HueApp {
     handlePostAuth(): Promise<void>;
     allowRemote(e: any): void;
     handleGroups(_e: any): void;
-    render(): JSX.Element[];
+    render(): any[];
 }
