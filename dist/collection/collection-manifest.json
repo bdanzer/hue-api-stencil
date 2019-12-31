@@ -1,11 +1,11 @@
 {
   "entries": [
     "components/dp-alert/dp-alert.js",
-    "components/hue-header/hue-header.js",
     "components/hue-collection/hue-collection.js",
+    "components/hue-header/hue-header.js",
     "components/dp-range/dp-range.js",
-    "components/dp-switch/dp-switch.js",
     "components/hue-light-group/hue-light-group.js",
+    "components/dp-switch/dp-switch.js",
     "components/hue-card/hue-card.js",
     "components/hue-app/hue-app.js",
     "components/hue-row-title/hue-row-title.js"
