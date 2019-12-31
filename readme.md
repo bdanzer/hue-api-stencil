@@ -1,5 +1,5 @@
 # Hue API
-<img src="https://imgur.com/a/ZRQEjUF">
+<img src="https://i.imgur.com/9C44hEF.png">
 This app allows you to control Hue lights that have been added already.
 
 ## Requirements
