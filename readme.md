@@ -1,5 +1,13 @@
-# Hue API Web components built with stencil
-Hue API web components built with stencil
+# Hue API
+This app allows you to control Hue lights that have been added already.
 
-# TODO
-This can register/control lights locally but not remotely yet
+## Requirements
+You'll need a Hue API bridge and a light that has already been paired.
+
+## Installation
+* `git clone <repo>`
+* `cd <into-cloned-dir>`
+* `npm install`
+* `npm start`
+
+Once up, you can press the hue api button and connect locally to control the lights in your house.

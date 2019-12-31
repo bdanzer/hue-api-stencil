@@ -61,6 +61,6 @@ img {
     transform: rotate(360deg);
   }
 }
-.hue-app:not(.hydrated) {
+hue-app:not(.hydrated) {
   visibility: hidden;
 }
