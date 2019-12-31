@@ -8,6 +8,8 @@ You'll need a Hue API bridge and a light that has already been paired.
 ## Installation
 * `git clone <repo>`
 * `cd <into-cloned-dir>`
+* `cd src/json/auth-copy.json && cp auth-copy.json auth.json`
+* Set up the appId, clientId, & clientSecret with a hue api account: https://developers.meethue.com/develop/hue-api/
 * `npm install`
 * `npm start`
 
