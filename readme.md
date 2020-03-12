@@ -1,6 +1,9 @@
 # Hue API
-<img src="https://i.imgur.com/9C44hEF.png">
+<img src="https://i.gyazo.com/571220752ad35bbbede651a1557842d6.gif">
 This app allows you to control Hue lights that have been added already.
+
+## A11y
+100% keyboard accesible
 
 ## Requirements
 You'll need a Hue API bridge and a light that has already been paired.
